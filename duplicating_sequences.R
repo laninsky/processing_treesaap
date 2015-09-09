@@ -1,8 +1,5 @@
 duplicating_sequences <- function(working_dir,fasta_file_name,freq_file_name) {
 
-# The stringr library is required
-library(stringr)
-
 # Throwing out error messages if any of the inputs are missing from the command line
 x <- 0
 error_one <- 0
@@ -58,10 +55,87 @@ print(noquote("Not to worry, your working directory IS valid! I've successfully 
 print(noquote(""))
 flush.console()
 
-#Checking status of arlequin file
-print(noquote("An error message after this indicates your file is not located in the directory you listed"))
+#Checking status of fasta file
+print(noquote("An error message after this indicates your fasta file is not located in the directory you listed"))
 flush.console()
-input <- readLines(file_name)
-print(noquote("Not to worry, your file IS located in the directory! I'm pulling it into my memory to extract the parts we are interested in"))
+intable <- read.table(fasta_file_name,header=FALSE,stringsAsFactors=FALSE,sep="\t")
+print(noquote("Not to worry, your fasta file IS located in the directory!"))
 print(noquote(""))
 flush.console()
+
+#Checking status of fasta file
+print(noquote("An error message after this indicates your frequency file is not located in the directory you listed"))
+flush.console()
+freq <- read.table(freq_file_name,header=FALSE,stringsAsFactors=FALSE,sep="\t")
+print(noquote("Not to worry, your frequency file IS located in the directory!"))
+print(noquote(""))
+flush.console()
+
+rm(error_one)
+rm(error_two)
+rm(error_three)
+rm(killswitch)
+rm(fasta_file_name)
+rm(freq_file_name)
+rm(working_dir)
+
+rows <- dim(intable)[1]
+
+tablelength <- dim(freq)[1]*2
+
+to_write <- matrix(NA,ncol=1,nrow=tablelength)
+to_write[1,1] <- paste(freq[1,1],sep="")
+
+to_write_title <- 2
+sequencepaste <- NULL
+
+for (j in 2:rows) {
+if ((length(grep(">",intable[j,1])))>0) {
+to_write_seq <- to_write_title
+to_write_title <- to_write_title + 1
+to_write[to_write_seq,1] <- sequencepaste
+to_write[to_write_title,1] <- paste(freq[(1+(to_write_title/2)),1],sep="")
+to_write_title <- to_write_title + 1
+sequencepaste <- NULL
+} else {
+sequencepaste <- paste(sequencepaste,intable[j,1],sep="")
+}
+}
+
+to_write[tablelength,1] <- sequencepaste
+
+rm(rows)
+rm(j)
+rm(sequencepaste)
+rm(to_write_title)
+rm(to_write_seq)
+rm(x)
+
+intable <- to_write
+rm(to_write)
+
+outputlength <- sum(as.numeric(freq[,2]))
+output <- matrix(NA, ncol=1,nrow=outputlength*2)
+rowno <- 1
+
+for (j in 1:tablelength) {
+if (grepl(">",intable[j,1])) {
+temp <- intable[j:(j+1),1]
+
+for (k in 1:(tablelength/2)) {
+if(intable[j,1]==freq[k,1]) {
+upper <- rowno + (freq[k,2]*2) - 1
+output[rowno:upper,1] <- temp
+rowno <- upper + 1
+break
+}
+}
+}
+}
+
+write.table(output, "output.fasta",quote=FALSE, col.names=FALSE,row.names=FALSE)
+print(noquote("The output of duplicating_sequences has been written to:"))
+print("output.fasta")
+print(noquote(""))
+flush.console()
+}
