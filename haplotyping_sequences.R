@@ -210,20 +210,12 @@ newnamearray <- rbind(newnamearray,namearray[j])
 }
 }
 
-###working on this section
-
-###Up to here
-
-
-
-
 if(length(newnamearray)>0) {
-newmissingamount <- cbind(newmissingamount,NA)
 newnamearray <- cbind(newnamearray,NA)
 newnamearraylen <- dim(newnamearray)[1]
+
 j <- 1
 i <- 1
-
 finnamearray <- NULL
 finmissingamount <- NULL
 
@@ -234,7 +226,6 @@ finmissingamount[i] <- newmissingamount[j]
 for (j in 1:(newnamearraylen)) {
 if(is.na(newnamearray[j,2])) {
 newnamearray[j,2] <- i
-newmissingamount[j,2] <- i
 rowlen <- length(unlist(strsplit(newnamearray[j,1], " ")))
 for (m in 1:rowlen) {
 k <- j + 1
@@ -242,7 +233,6 @@ while (k <= newnamearraylen) {
 if(is.na(newnamearray[k,2])) {
 if(((unlist(strsplit(newnamearray[j,1]," "))) [m]) %in% (unlist(strsplit(newnamearray[k,1]," ")))) {
 newnamearray[k,2] <- i
-newmissingamount[k,2] <- i
 }
 }
 k <- k + 1
@@ -252,13 +242,13 @@ i <- i + 1
 }
 j <- j + 1
 }
+}
+}
 
 if(is.na(newnamearray[newnamearraylen,2])) {
 newnamearray[newnamearraylen,2] <- i + 1
-newmissingamount[newnamearraylen,2] <- i + 1
 }
 
-newnamearray <- cbind(newnamearray,newmissingamount)
 newnamearray <- newnamearray[order(newnamearray[,2]),]
 i <- 1
 j <- 1
@@ -266,22 +256,25 @@ j <- 1
 while (j < newnamearraylen) {
 k <- j + 1
 finnamearray[i] <- newnamearray[j,1]
-finmissingamount[i] <- newnamearray[j,3]
 while ((k <= newnamearraylen) && (newnamearray[j,2]==newnamearray[k,2])) {
 finnamearray[i] <- paste(finnamearray[i],newnamearray[k,1])
-finmissingamount[i] <- paste(finmissingamount[i],newnamearray[k,3])
 k <- k + 1
 }
 i <- i + 1
 j <- k
 }
 
+
+
+
+####################FINNAMEARRAY IS GOOD FROM HERE - TRY AND FIGURE OUT A WAY TO USE IT
+
+
+
+
 if(!(newnamearray[newnamearraylen,2]==newnamearray[(newnamearraylen-1),2])) {
-finmissingamount[length(finnamearray)+1] <- newnamearray[newnamearraylen,3] 
 finnamearray[length(finnamearray)+1] <- newnamearray[newnamearraylen,1]
 }
-}
-
 
 temphaplist <- haplist[1,]
 uniques_for_adding <- NULL
@@ -289,7 +282,6 @@ j <- 1
 
 while (j <= length(finnamearray)) {
 addsies <- NULL
-secondcols <- rep.int(0,no_pops)
 vectorizing <- unlist(strsplit(finnamearray[j], " "))
 checkformults <- as.data.frame(table(vectorizing))
 checkformults <- checkformults[order(checkformults[,2]),]
@@ -298,27 +290,6 @@ checkformultslen <- dim(checkformults)[1]
 
 if(checkformultslen>2) {
 for (k in 1:(checkformultslen-2)) {
-if (!((checkformults[k,2]+1)==checkformults[(k+1),2])) {
-print(noquote(""))
-print(noquote("You have haplotype(s) with so much missing data they could be a match"))
-print(noquote("to multiple different haplotypes. Please remove these haplotypes and try again"))
-toprint <- vectorizing[which.max(unlist(strsplit(finmissingamount[j], " ")))]
-print(noquote(toprint))
-flush.console()
-stop("The above haplotype has the most missing data of the matching haplotypes. Remove it and try again")
-}
-}
-
-if(!(checkformults[checkformultslen,2]<=(checkformults[(checkformultslen-1),2]+1))) {
-print(noquote(""))
-print(noquote("You have a haplotype with so much missing data it could be a match"))
-print(noquote("to multiple different haplotypes. Please remove this haplotype and try again"))
-toprint <- vectorizing[which.max(unlist(strsplit(finmissingamount[j], " ")))]
-print(noquote(toprint))
-flush.console()
-stop("Please remove the above haplotype which has too much missing data and try again")
-}
-}
 
 onlyunique <- vectorizing[!duplicated(vectorizing)]
 print(noquote("The following set of haplotypes is identical"))
@@ -329,14 +300,19 @@ for (k in 1:length(onlyunique)) {
 for (m in 2:haplistlength) {
 if (haplist[m,1]==onlyunique[k]) {
 firstcols <- haplist[m,1:2]
-secondcols <- secondcols + as.numeric(haplist[m,3:(no_pops+2)])
 }
 }
 }
-addsies <- cbind((t(as.matrix(firstcols))),(t(as.matrix(secondcols))))
+addsies <- t(as.matrix(firstcols))
 temphaplist <- rbind(temphaplist,addsies)
+}
+}
 j <- j + 1
 }
+
+
+
+
 
 for (m in 2:haplistlength) {
 if (!(haplist[m,1] %in% uniques_for_adding)) {
@@ -352,64 +328,4 @@ print(noquote(""))
 flush.console()
 write.table(haplist, "haplist.txt", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
 
-no_seqs <- dim(haplist)[1] - 1 
-pattern <- NULL
-propdiffs <- matrix(NA,nrow = (no_seqs + 1),ncol = (no_seqs + 1))
-propdiffs[1,] <- t(haplist[,1])
-propdiffs[,1] <- haplist[,1]
-
-if(!(is.null(missingdata))) {
-ambigs <- c("R","Y","S","W","K","M","B","D","H","V","N",missingdata,"r","y","s","w","k","m","b","d","h","v","n")
-} else {
-ambigs <- c("R","Y","S","W","K","M","B","D","H","V","N","r","y","s","w","k","m","b","d","h","v","n")
 }
-
-OKbases <- c("A","C","G","T","-","a","c","g","t")
-
-for (j in 2:(no_seqs+1)) {
-first <- unlist(strsplit(haplist[j,2],pattern))
-k <- j + 1
-no_bp <- length(first)
-while (k <= (no_seqs + 1)) {
-tot_bp <- 0
-mismatch <- 0
-second <- unlist(strsplit(haplist[k,2],pattern))
-for (m in 1:no_bp) {
-if (!(first[m] %in% ambigs)) {
-if (!(first[m] %in% OKbases)) {
-stop("\n\nThere are non-IUPAC codes in your DNA sequence data. Please check this and try again.\n\n")
-}
-if (!(second[m] %in% ambigs)) {
-if (!(second[m] %in% OKbases)) {
-stop("\n\nThere are non-IUPAC codes in your DNA sequence data. Please check this and try again.\n\n")
-}
-tot_bp <- tot_bp + 1
-
-if (first[m]!=second[m]) {
-if (tolower(first[m])==second[m]) {
-break
-}
-if (toupper(first[m])==second[m]) {
-break
-}
-mismatch <- mismatch + 1 }
-                             }
-                           }
-                    }
-propdiffs[k,j] <- mismatch/tot_bp
-k <- k + 1
-                            }
-                          }
-
-} else {
-print(noquote("No identical haplotypes were found in your haplotype definition"))
-print(noquote("The input table has been written to:"))
-print("haplist.txt")
-print(noquote(""))
-flush.console()
-write.table(haplist, "haplist.txt", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
-}
-
-i <- NULL
-m <- 1
-
