@@ -6,6 +6,11 @@
 
 haplotyping_sequences <- function(working_dir,file_name) {
 
+working_dir <- "C:/Users/Alana/Dropbox/Mitogenome_Phil"
+file_name <- "output.fasta"
+
+
+
 # The stringr library is required
 library(stringr)
 
@@ -144,11 +149,23 @@ ambigs <- c("R","Y","S","W","K","M","B","D","H","V","N","r","y","s","w","k","m",
 OKbases <- c("A","C","G","T","-","a","c","g","t")
 
 # Calculating the proportion of differences between haplotypes for all base positions that do not have an ambiguous nucleotide
+print(noquote("Will update you on progress for calculating proportion of differences between sequences at every fifth sequence"))
+print(noquote("Currently up to the following sequence in your file"))
+flush.console()
+
 for (j in 1:no_seqs) {
-first <- unlist(strsplit(haplist[j,2],pattern))
+
+if(round(j/5)==(j/5)) {
+print(noquote(j))
+flush.console()
+}
+
 k <- j + 1
+
+first <- unlist(strsplit(haplist[j,2],pattern))
 no_bp <- length(first)
 while (k <= no_seqs) {
+if(!(haplist[j,2]==haplist[k,2])) {
 tot_bp <- 0
 mismatch <- 0
 second <- unlist(strsplit(haplist[k,2],pattern))
@@ -176,9 +193,14 @@ mismatch <- mismatch + 1 }
                            }
                     }
 propdiffs[(k+1),(j+1)] <- mismatch/tot_bp
+                            } else {
+propdiffs[(k+1),(j+1)] <- 0
+}
+
 k <- k + 1
-                            }
+
                           }
+}
 
 
 
