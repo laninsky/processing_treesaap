@@ -121,86 +121,19 @@ maxhaplength <- max(nchar(haplist[2:haplistlength,2]))
 #Error messages tested and funcitons
 if(minhaplength==maxhaplength) {
    if(all(is.na(haplist[2:haplistlength,2]))) {
-stop("\n\nNo sequence given for haplotypes. Please make sure you have sequence defined for each of your haplotypes in your haplist\n")
+stop("\n\nNo sequence given for haplotypes. Please make sure you have sequence defined for each of your haplotypes\n")
 }
 } else  {
-stop("\n\nYour arlequin file does not have equal length haplotypes. Please check your alignment and try again\n")
+stop("\n\nYour file does not have equal length haplotypes. Please check your alignment and try again\n")
 }
 
 print(noquote("Your haplotypes appear to be of equal lengths"))
 print(noquote(""))
 flush.console()
 
-# Filling in the number of haplotypes by population in our file 'haplist'.  Error message tested and functioning
-print(noquote("An error message following this suggests there is something wrong with your haplist block"))
-print(noquote("If arlequin opens your file correctly, but this program doesn't, please contact alana.alexander@ku.edu"))
-flush.console()
-
-popno <- 2
-j <- 1
-matcharray <- NULL
-
-while (j <= inputlength)  {
-if (grepl("SampleName[[:blank:]]*=", matrixinput[j,1])==TRUE) {
-   popno <- popno + 1
-   haplist[1,popno] <-  (unlist(strsplit(matrixinput[j,1],'"'))[2])
-   k <- j + 1
-   while (matrixinput[k,2]==matrixinput[j,2]) {
-   isitamatch <-  (unlist(strsplit((str_trim(matrixinput[k,1],side="left")),"[[:blank:]]+",fixed=FALSE))[1])
-   matchbad <- c("",NA)
-   if(!(isitamatch %in% matchbad)){
-   if (grepl("sample", matrixinput[k,1],ignore.case=TRUE)==FALSE) {
-   matcharray <- append(matcharray,isitamatch)
-   for (m in 2:haplistlength) {
-   if (haplist[m,1]==isitamatch) {
-   haplist[m,popno] <-  (unlist(strsplit((str_trim(matrixinput[k,1],side="left")),"[[:blank:]]+",fixed=FALSE))[2])
-    }
-    }
-    }
-    }
-   k <- k + 1                                  }
-                                                  }
-j <- j + 1
-                          }
-
-# Error message tested and functioning
-lenarray <- length(matcharray)
-k <- 0
-for (j in 1:lenarray) {
-if (!(matcharray[j] %in% haplist[2:haplistlength,1])) {
-print(matcharray[j])
-k <- k + 1
-}
-}
-
-if(k>0) {
-stop("\nThe haplotype(s) printed above are defined under your population data but aren't present in your haplotype list.\nPlease fix the file and try again.")
-}
-
-print(noquote("Not to worry: I have successfully parsed the haplotypes from your haplotype definition block"))
-print(noquote(""))
-flush.console()
-
-haplist[is.na(haplist)] <- 0
-
 # Getting some parameters that will be used whether haplotype and/or nucleotide diversity is being tested
-i <- NULL
-j <- NULL
-k <- NULL
-pop_size <- NULL # defining variables used in the for loop below
 
-no_haps <- dim(haplist)[1] - 1  #Getting the number of haplotypes from the input file
-no_pops <- dim(haplist)[2] - 2  #Getting the number of populations from the input file
-
-for (i in 1:no_pops) {
-j <- sum(as.numeric(haplist[1:no_haps+1, i+2])) # summing the total number of samples in population i
-pop_size[i] <- j # adding the pop size for i to 'pop_size', an array recording all population sizes
-}
-
-# Error message tested and functioning
-if(0 %in% pop_size) {
-stop("\n\nYour arlequin file contains a population with no data. Please remove/correct this population and try again\n\n")
-}
+no_seqs <- dim(haplist)[1]  #Getting the number of haplotypes from the input file
 
 print(noquote("I am now going to check for duplicate haplotypes in your haplotype definitions"))
 flush.console()
@@ -208,23 +141,18 @@ flush.console()
 # We need to check if any of the haplotypes are identical and pool these if so
 # Defining our variables for the loop below
 pattern <- NULL
-propdiffs <- matrix(NA,nrow = (no_haps + 1),ncol = (no_haps + 1))
-propdiffs[1,] <- t(haplist[,1])
-propdiffs[,1] <- haplist[,1]
-if(!(is.null(missingdata))) {
-ambigs <- c("R","Y","S","W","K","M","B","D","H","V","N",missingdata,"r","y","s","w","k","m","b","d","h","v","n")
-} else {
+propdiffs <- matrix(NA,nrow = (no_seqs + 1),ncol = (no_seqs + 1))
+propdiffs[1,2:(no_seqs+1)] <- t(haplist[,1])
+propdiffs[2:(no_seqs+1),1] <- haplist[,1]
 ambigs <- c("R","Y","S","W","K","M","B","D","H","V","N","r","y","s","w","k","m","b","d","h","v","n")
-}
-
 OKbases <- c("A","C","G","T","-","a","c","g","t")
 
 # Calculating the proportion of differences between haplotypes for all base positions that do not have an ambiguous nucleotide
-for (j in 2:(no_haps+1)) {
+for (j in 1:no_seqs) {
 first <- unlist(strsplit(haplist[j,2],pattern))
 k <- j + 1
 no_bp <- length(first)
-while (k <= (no_haps + 1)) {
+while (k <= no_seqs) {
 tot_bp <- 0
 mismatch <- 0
 second <- unlist(strsplit(haplist[k,2],pattern))
@@ -251,25 +179,23 @@ mismatch <- mismatch + 1 }
                              }
                            }
                     }
-propdiffs[k,j] <- mismatch/tot_bp
+propdiffs[(k+1),(j+1)] <- mismatch/tot_bp
 k <- k + 1
                             }
                           }
+
 
 j <- 2
 namearray <- NULL
 missingamount <- NULL
 
-while (j <= no_haps) {
+while (j <= no_seqs) {
 namearray[j] <- haplist[j,1]
-if (!(is.null(missingdata))) {
-missingamount[j] <- nchar(haplist[j,2])-nchar(gsub(missingdata,"",haplist[j,2],fixed=TRUE))
-} else {
 missingamount[j] <- 0
-}
+
 k <- j + 1
 m <- 0
-while (k <= (no_haps+1)) {
+while (k <= (no_seqs+1)) {
 if (propdiffs[k,j]==0) {
 m <- m + 1
 namearray[j] <- paste(namearray[j],haplist[k,1])
@@ -430,9 +356,9 @@ print(noquote(""))
 flush.console()
 write.table(haplist, "haplist.txt", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
 
-no_haps <- dim(haplist)[1] - 1 
+no_seqs <- dim(haplist)[1] - 1 
 pattern <- NULL
-propdiffs <- matrix(NA,nrow = (no_haps + 1),ncol = (no_haps + 1))
+propdiffs <- matrix(NA,nrow = (no_seqs + 1),ncol = (no_seqs + 1))
 propdiffs[1,] <- t(haplist[,1])
 propdiffs[,1] <- haplist[,1]
 
@@ -444,11 +370,11 @@ ambigs <- c("R","Y","S","W","K","M","B","D","H","V","N","r","y","s","w","k","m",
 
 OKbases <- c("A","C","G","T","-","a","c","g","t")
 
-for (j in 2:(no_haps+1)) {
+for (j in 2:(no_seqs+1)) {
 first <- unlist(strsplit(haplist[j,2],pattern))
 k <- j + 1
 no_bp <- length(first)
-while (k <= (no_haps + 1)) {
+while (k <= (no_seqs + 1)) {
 tot_bp <- 0
 mismatch <- 0
 second <- unlist(strsplit(haplist[k,2],pattern))
