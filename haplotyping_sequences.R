@@ -180,6 +180,29 @@ k <- k + 1
                             }
                           }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 j <- 1
 namearray <- NULL
 missingamount <- NULL
@@ -201,7 +224,6 @@ j <- j + 1
 }
 
 newnamearray <- NULL
-newmissingamount <- NULL
 
 namearraylen <- length(namearray)
 for (j in 1:namearraylen) {
@@ -264,68 +286,47 @@ i <- i + 1
 j <- k
 }
 
-
-
-
-####################FINNAMEARRAY IS GOOD FROM HERE - TRY AND FIGURE OUT A WAY TO USE IT
-
-
-
-
 if(!(newnamearray[newnamearraylen,2]==newnamearray[(newnamearraylen-1),2])) {
 finnamearray[length(finnamearray)+1] <- newnamearray[newnamearraylen,1]
 }
 
 temphaplist <- haplist[1,]
 uniques_for_adding <- NULL
+sets_of_unique_haplotypes <- "sets of unique haplotypes"
 j <- 1
 
 while (j <= length(finnamearray)) {
-addsies <- NULL
 vectorizing <- unlist(strsplit(finnamearray[j], " "))
-checkformults <- as.data.frame(table(vectorizing))
-checkformults <- checkformults[order(checkformults[,2]),]
-checkformults <- droplevels(checkformults)
-checkformultslen <- dim(checkformults)[1]
-
-if(checkformultslen>2) {
-for (k in 1:(checkformultslen-2)) {
-
 onlyunique <- vectorizing[!duplicated(vectorizing)]
+sets_of_unique_haplotypes <- rbind(sets_of_unique_haplotypes,(paste0(onlyunique,collapse=", ")))
+
 print(noquote("The following set of haplotypes is identical"))
 print(noquote(onlyunique))
 flush.console()
-uniques_for_adding <- append(uniques_for_adding,onlyunique)
+
+uniques_for_adding <- rbind(uniques_for_adding,onlyunique[j])
+
 for (k in 1:length(onlyunique)) {
-for (m in 2:haplistlength) {
+for (m in 1:haplistlength) {
 if (haplist[m,1]==onlyunique[k]) {
-firstcols <- haplist[m,1:2]
+uniques_for_adding <- rbind(uniques_for_adding,haplist[m,2])
 }
-}
-}
-addsies <- t(as.matrix(firstcols))
-temphaplist <- rbind(temphaplist,addsies)
 }
 }
 j <- j + 1
 }
 
-
-
-
-
-for (m in 2:haplistlength) {
-if (!(haplist[m,1] %in% uniques_for_adding)) {
-temphaplist <- rbind(temphaplist,haplist[m,])
-}
-}
-
-haplist <- temphaplist
-print(noquote("The frequency for sets of identical haplotypes has been merged"))
-print(noquote("The modified input table is in the process of being written to:"))
-print("haplist.txt")
+print(noquote("The fasta file of the unique haplotypes has been written to:"))
+print("haplist.fasta")
 print(noquote(""))
 flush.console()
-write.table(haplist, "haplist.txt", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
+write.table(uniques_for_adding, "haplist.fasta", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
+
+print(noquote("The sets of duplicate sequences for each unique haplotypes has been written to:"))
+print("duplicate_sequences.txt")
+print(noquote(""))
+flush.console()
+write.table(sets_of_unique_haplotypes, "duplicate_sequences.txt", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
+
 
 }
