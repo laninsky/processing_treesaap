@@ -96,10 +96,6 @@ rm(haplist_rows)
 rm(sequencepaste)
 rm(intable)
 
-###working on this section
-
-###Up to here
-
 haplistlength <- dim(haplist)[1]
 
 checkingforduphapnames <- as.data.frame(table(haplist[2:haplistlength,1]))
@@ -184,8 +180,7 @@ k <- k + 1
                             }
                           }
 
-
-j <- 2
+j <- 1
 namearray <- NULL
 missingamount <- NULL
 
@@ -195,15 +190,10 @@ missingamount[j] <- 0
 
 k <- j + 1
 m <- 0
-while (k <= (no_seqs+1)) {
-if (propdiffs[k,j]==0) {
+while (k <= no_seqs) {
+if (propdiffs[(k+1),(j+1)]==0) {
 m <- m + 1
 namearray[j] <- paste(namearray[j],haplist[k,1])
-if (!(is.null(missingdata))) {
-missingamount[j] <- paste(missingamount[j],(nchar(haplist[k,2])-nchar(gsub(missingdata,"",haplist[k,2],fixed=TRUE))))
-} else {
-missingamount[j] <- paste(missingamount[j],0)
-}
 }
 k <- k + 1
 }
@@ -217,9 +207,15 @@ namearraylen <- length(namearray)
 for (j in 1:namearraylen) {
 if ((length(unlist(strsplit(namearray[j]," "))))>1) {
 newnamearray <- rbind(newnamearray,namearray[j])
-newmissingamount <- rbind(newmissingamount,missingamount[j])
 }
 }
+
+###working on this section
+
+###Up to here
+
+
+
 
 if(length(newnamearray)>0) {
 newmissingamount <- cbind(newmissingamount,NA)
