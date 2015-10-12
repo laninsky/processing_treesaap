@@ -1,14 +1,11 @@
-# Test commands
-#working_dir <- "C:/Users/Alana/Dropbox/Mitogenome_Phil"
-#file_name <- "output.fasta"
+#Example usage
 #haplotyping_sequences("C:/Users/Alana/Dropbox/Mitogenome_Phil", "output.fasta")
-
 
 haplotyping_sequences <- function(working_dir,file_name) {
 
 working_dir <- "C:/Users/Alana/Dropbox/Mitogenome_Phil"
 file_name <- "output.fasta"
-
+file_name <- "All_Pmac_Unique_Haps_13gene_Concat_HapAssign.fasta"
 
 
 # The stringr library is required
@@ -202,37 +199,28 @@ k <- k + 1
                           }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+rm(ambigs)
+rm(checkingforduphapnameslen)
+rm(checkingforduphapnames)
+rm(j)
+rm(k)
+rm(m)
+rm(maxhaplength)
+rm(minhaplength)
+rm(mismatch)
+rm(no_bp)
+rm(first)
+rm(OKbases)
+rm(pattern)
+rm(second)
+rm(tot_bp)
+rm(haplistlength)
 
 j <- 1
 namearray <- NULL
-missingamount <- NULL
 
 while (j <= no_seqs) {
 namearray[j] <- haplist[j,1]
-missingamount[j] <- 0
-
 k <- j + 1
 m <- 0
 while (k <= no_seqs) {
@@ -245,38 +233,27 @@ k <- k + 1
 j <- j + 1
 }
 
-newnamearray <- NULL
+finnamearray <- NULL
 
-namearraylen <- length(namearray)
-for (j in 1:namearraylen) {
-if ((length(unlist(strsplit(namearray[j]," "))))>1) {
-newnamearray <- rbind(newnamearray,namearray[j])
-}
-}
-
-if(length(newnamearray)>0) {
-newnamearray <- cbind(newnamearray,NA)
-newnamearraylen <- dim(newnamearray)[1]
+namearray <- cbind(namearray,NA)
+namearraylen <- dim(namearray)[1]
 
 j <- 1
 i <- 1
-finnamearray <- NULL
-finmissingamount <- NULL
 
-if(newnamearraylen==1) {
-finnamearray[i] <- newnamearray[j]
-finmissingamount[i] <- newmissingamount[j]
+if(namearraylen==1) {
+finnamearray <- namearray
 } else {
-for (j in 1:(newnamearraylen)) {
-if(is.na(newnamearray[j,2])) {
-newnamearray[j,2] <- i
-rowlen <- length(unlist(strsplit(newnamearray[j,1], " ")))
+for (j in 1:(namearraylen)) {
+if(is.na(namearray[j,2])) {
+namearray[j,2] <- i
+rowlen <- length(unlist(strsplit(namearray[j,1], " ")))
 for (m in 1:rowlen) {
 k <- j + 1
-while (k <= newnamearraylen) {
-if(is.na(newnamearray[k,2])) {
-if(((unlist(strsplit(newnamearray[j,1]," "))) [m]) %in% (unlist(strsplit(newnamearray[k,1]," ")))) {
-newnamearray[k,2] <- i
+while (k <= namearraylen) {
+if(is.na(namearray[k,2])) {
+if(((unlist(strsplit(namearray[j,1]," "))) [m]) %in% (unlist(strsplit(namearray[k,1]," ")))) {
+namearray[k,2] <- i
 }
 }
 k <- k + 1
@@ -286,55 +263,54 @@ i <- i + 1
 }
 j <- j + 1
 }
-}
+
+if(is.na(namearray[namearraylen,2])) {
+namearray[namearraylen,2] <- i + 1
 }
 
-if(is.na(newnamearray[newnamearraylen,2])) {
-newnamearray[newnamearraylen,2] <- i + 1
-}
-
-newnamearray <- newnamearray[order(newnamearray[,2]),]
+namearray <- namearray[order(namearray[,2]),]
 i <- 1
 j <- 1
 
-while (j < newnamearraylen) {
+while (j < namearraylen) {
 k <- j + 1
-finnamearray[i] <- newnamearray[j,1]
-while ((k <= newnamearraylen) && (newnamearray[j,2]==newnamearray[k,2])) {
-finnamearray[i] <- paste(finnamearray[i],newnamearray[k,1])
+finnamearray[i] <- namearray[j,1]
+while ((k <= namearraylen) && (namearray[j,2]==namearray[k,2])) {
+finnamearray[i] <- paste(finnamearray[i],namearray[k,1])
 k <- k + 1
 }
 i <- i + 1
 j <- k
 }
-
-if(!(newnamearray[newnamearraylen,2]==newnamearray[(newnamearraylen-1),2])) {
-finnamearray[length(finnamearray)+1] <- newnamearray[newnamearraylen,1]
 }
 
-temphaplist <- haplist[1,]
+rm(j)
+rm(k)
+rm(m)
+rm(namearray)
+rm(namearraylen)
+
 uniques_for_adding <- NULL
-sets_of_unique_haplotypes <- "sets of unique haplotypes"
+sets_of_unique_haplotypes <- "sets of unique haplotypes, separated on new lines"
 j <- 1
 
 while (j <= length(finnamearray)) {
 vectorizing <- unlist(strsplit(finnamearray[j], " "))
 onlyunique <- vectorizing[!duplicated(vectorizing)]
-sets_of_unique_haplotypes <- rbind(sets_of_unique_haplotypes,(paste0(onlyunique,collapse=", ")))
-
+if(length(onlyunique)>1) {
 print(noquote("The following set of haplotypes is identical"))
 print(noquote(onlyunique))
+print(noquote(""))
 flush.console()
+}
+uniques_for_adding <- rbind(uniques_for_adding,onlyunique[1])
 
-uniques_for_adding <- rbind(uniques_for_adding,onlyunique[j])
-
-for (k in 1:length(onlyunique)) {
-for (m in 1:haplistlength) {
-if (haplist[m,1]==onlyunique[k]) {
+for (m in 1:no_seqs) {
+if (haplist[m,1]==onlyunique[1]) {
 uniques_for_adding <- rbind(uniques_for_adding,haplist[m,2])
 }
 }
-}
+sets_of_unique_haplotypes <- rbind(sets_of_unique_haplotypes,(paste0(onlyunique,collapse=", ")))
 j <- j + 1
 }
 
@@ -349,6 +325,4 @@ print("duplicate_sequences.txt")
 print(noquote(""))
 flush.console()
 write.table(sets_of_unique_haplotypes, "duplicate_sequences.txt", sep="\t",quote=FALSE, row.names=FALSE,col.names=FALSE)
-
-
 }
