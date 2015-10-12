@@ -1,13 +1,14 @@
 #Example usage
 #haplotyping_sequences("C:/Users/Alana/Dropbox/Mitogenome_Phil", "output.fasta")
+#haplotyping_sequences("C:/Users/Alana/Dropbox/Mitogenome_Phil/test", "All_Pmac_Unique_Haps_13gene_Concat_HapAssign.fasta")
+
+
+#working_dir <- "C:/Users/Alana/Dropbox/Mitogenome_Phil"
+#file_name <- "output.fasta"
+#file_name <- "All_Pmac_Unique_Haps_13gene_Concat_HapAssign.fasta"
+
 
 haplotyping_sequences <- function(working_dir,file_name) {
-
-working_dir <- "C:/Users/Alana/Dropbox/Mitogenome_Phil"
-file_name <- "output.fasta"
-file_name <- "All_Pmac_Unique_Haps_13gene_Concat_HapAssign.fasta"
-
-
 # The stringr library is required
 library(stringr)
 
