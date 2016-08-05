@@ -11,8 +11,8 @@ filelist <- list.files()
 #creating list of files which have Pma-Pma comparisons and excluding them (Pmas are all prefixed by mtgen)
 newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))<2)]
 nocomps <- length(filelist)
-output <- c("codon","comparison","property")
-write.table(output, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALSE)
+output <- matrix(c("codon","comparison","property"),nrow=1)
+write.table(output, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALSE,sep="\t")
 
 for (i in 1:nocomps) {
 toprint <- paste(round((i/nocomps*100),3),"% through the files",sep="")
@@ -25,8 +25,8 @@ propertylists <- which(grepl("\\(6, ", templine[]) | grepl("\\(7, ", templine[])
 if(length(propertylists)>0) {
 for (k in 1:length(propertylists)) {
 tempproperty <- unlist(strsplit(templine[propertylists[k]],"\\) "))[2]
-tempoutput <- c(templine[1],templine[2],tempproperty)
-write.table(tempoutput, "output.txt",append=TRUE,quote=FALSE, col.names=FALSE,row.names=FALSE)
+tempoutput <- matrix(c(templine[1],templine[2],tempproperty),nrow=1)
+write.table(tempoutput, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALSE,sep="\t",append=TRUE)
 }
 }
 }
