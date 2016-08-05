@@ -4,13 +4,16 @@ Summarizing results over multiple pairwise comparisons using R
 ```
 #Set your working directory in the folder containing all the subfolders for the comparison
 library(stringr)
+library(data.table)
+library(plyr)
+
 setwd("C:/Users/a499a400/Dropbox/Mitogenome_Phil/selection_analyses/treesaap/multi_pma/pairwise/")
 
 filelist <- list.files()
 
 #creating list of files which have Pma-Pma comparisons and excluding them (Pmas are all prefixed by mtgen)
 newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))<2)]
-nocomps <- length(filelist)
+nocomps <- length(newfilelist)
 output <- matrix(c("codon","comparison","property"),nrow=1)
 write.table(output, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALSE,sep="\t")
 
@@ -31,5 +34,11 @@ write.table(tempoutput, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALS
 }
 }
 }
+
+tempoutput <- read.table("output.txt",sep="\t",header=TRUE)
+outputtable <- as.data.table(tempoutput)
+out <- ddply(outputtable, .(V1,V3), as.data.frame(nrow))
+
+out <- out[(which(out[,3]==nocomps)),]
 
 
