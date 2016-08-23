@@ -11,11 +11,17 @@ setwd("C:/Users/a499a400/Dropbox/Mitogenome_Phil/selection_analyses/treesaap/mul
 
 filelist <- list.files()
 
-#creating list of files which have Pma-Pma comparisons and excluding them (Pmas are all prefixed by mtgen)
-newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))<2)]
+#creating list of files which have Pma comparisons and excluding them (Pmas are all prefixed by mtgen)
+#newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))<2)]
+nocomps <- length(newfilelist)
+
+#creating list of files which have a Pma comparison and including them (Pmas are all prefixed by mtgen)
+newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))==1)]
+
 nocomps <- length(newfilelist)
 output <- matrix(c("codon","comparison","property"),nrow=1)
 write.table(output, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALSE,sep="\t")
+
 
 for (i in 1:nocomps) {
 toprint <- paste(round((i/nocomps*100),3),"% through the files",sep="")
@@ -37,8 +43,7 @@ write.table(tempoutput, "output.txt",quote=FALSE, col.names=FALSE,row.names=FALS
 
 tempoutput <- read.table("output.txt",sep="\t",header=TRUE)
 outputtable <- as.data.table(tempoutput)
-out <- ddply(outputtable, .(V1,V3), as.data.frame(nrow))
-
+out <- ddply(outputtable, .(codon,property), as.data.frame(nrow))
 out <- out[(which(out[,3]==nocomps)),]
 
 
