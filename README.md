@@ -13,7 +13,7 @@ filelist <- list.files()
 
 #creating list of files which have Pma comparisons and excluding them (Pmas are all prefixed by mtgen)
 #newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))<2)]
-nocomps <- length(newfilelist)
+
 
 #creating list of files which have a Pma comparison and including them (Pmas are all prefixed by mtgen)
 newfilelist <- filelist[which((str_count(filelist[],"MTGEN"))==1)]
