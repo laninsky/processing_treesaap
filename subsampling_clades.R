@@ -1,7 +1,3 @@
-working_dir <- "C:\\Users\\a499a400\\Dropbox\\Mitogenome_Phil"
-file <- "clade_frequencies.txt.R"
-no_permuts <- 10
-
 subsampling_clades <- function(working_dir,file,no_permuts) {
 
 #checking to make sure that all arguments are present
@@ -72,7 +68,14 @@ samplesizes[,1] <- input[1,2:(dim(input)[2])]
 samplesizes[,2] <- colSums(matrix(as.numeric(input[2:(dim(input)[1]),2:(dim(input)[2])]),ncol=(dim(input)[2]-1)))
 samplesizes <- samplesizes[order(as.numeric(samplesizes[,2])),]
 
+#for (i in 1:(dim(samplesizes)[1]-1)) {
 for (i in 1:(dim(samplesizes)[1]-1)) {
+   print(noquote("Subsampling your data for the following number of individuals:"))
+   print(noquote(samplesizes[i,2]))
+   print(noquote("Corresponding to the following region's sample size:"))
+   print(noquote(samplesizes[i,1]))
+   print(noquote(""))
+   flush.console()
    record_matrix <- NULL
    for (j in 2:(dim(input)[2])) {
        if ((as.numeric(samplesizes[which(input[1,j]==samplesizes[,1]),2]))>as.numeric(samplesizes[i,2])) {
@@ -88,10 +91,15 @@ for (i in 1:(dim(samplesizes)[1]-1)) {
           }
           temp_matrix <- rbind(rep(input[1,j],as.numeric(samplesizes[i,2])),temp_matrix)
        } else {
-         haps <- input[((which(as.numeric(input[2:(dim(input)[1]),j])>=as.numeric(samplesizes[i,2])))+1),1]
-         temp_matrix <- matrix(rep(haps,no_permuts),nrow=no_permuts,ncol=length(haps),byrow=TRUE)
-         temp_matrix <- rbind(rep(input[1,j],as.numeric(samplesizes[i,2])),temp_matrix)
-       }
+            haps <- input[(which(as.numeric(input[2:(dim(input)[1]),j])>=1)+1),1]
+            if ((length(haps))>1) {
+               temp_matrix <- matrix(rep(haps,no_permuts),nrow=no_permuts,ncol=length(haps),byrow=TRUE)
+               temp_matrix <- rbind(rep(input[1,j],(length(haps))),temp_matrix)
+            } else {
+               temp_matrix <- matrix(rep(haps,no_permuts),nrow=no_permuts,ncol=1,byrow=TRUE)
+               temp_matrix <- rbind(input[1,j],temp_matrix)
+            }
+       }   
      record_matrix <- cbind(record_matrix,temp_matrix)  
    }
    write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_full_hap_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)
@@ -99,11 +107,16 @@ for (i in 1:(dim(samplesizes)[1]-1)) {
    summary_matrix[2:dim(summary_matrix)[1],2:dim(summary_matrix)[2]] <- 0
    for (j in 2:(dim(summary_matrix)[2])) { 
       for (k in 2:(dim(summary_matrix)[1])) {
-         summary_matrix[k,j] <- sum(record_matrix[,which(record_matrix[1,]==summary_matrix[1,j])]==summary_matrix[k,1])/no_permuts
-      }   
-   }
-   write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_summary_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)   
+         for (m in 2:(no_permuts+1)) {
+            if (any(record_matrix[m,which(record_matrix[1,]==summary_matrix[1,j])]==summary_matrix[k,1])) {
+               summary_matrix[k,j] <- as.numeric(summary_matrix[k,j]) + 1
+            }
+         }
+      summary_matrix[k,j] <- as.numeric(summary_matrix[k,j])/no_permuts
+      }
+   }   
+   write.table(summary_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_summary_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)   
+
 }
-
-
+   
 }
