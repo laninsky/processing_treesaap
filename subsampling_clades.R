@@ -92,12 +92,17 @@ for (i in 1:(dim(samplesizes)[1]-1)) {
          temp_matrix <- matrix(rep(haps,no_permuts),nrow=no_permuts,ncol=length(haps),byrow=TRUE)
          temp_matrix <- rbind(rep(input[1,j],as.numeric(samplesizes[i,2])),temp_matrix)
        }
-       record_matrix <- cbind(record_matrix,temp_matrix)  
-    }
-    write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_full_hap_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)
-  
-  
-  
+     record_matrix <- cbind(record_matrix,temp_matrix)  
+   }
+   write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_full_hap_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)
+   summary_matrix <- input
+   summary_matrix[2:dim(summary_matrix)[1],2:dim(summary_matrix)[2]] <- 0
+   for (j in 2:(dim(summary_matrix)[2])) { 
+      for (k in 2:(dim(summary_matrix)[1])) {
+         summary_matrix[k,j] <- sum(record_matrix[,which(record_matrix[1,]==summary_matrix[1,j])]==summary_matrix[k,1])/no_permuts
+      }   
+   }
+   write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_summary_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)   
 }
 
 
