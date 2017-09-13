@@ -1,4 +1,4 @@
-# subsampling_clades
+# subsampling_clades v.1.0.0
 Biogeographic inference can be heavily biased by sampling. This code downsamples by geographic region to try and account for this.
 
 As an input this code takes a file with the clades identifiers in the first column (whitespace delimited), followed by counts of samples found within those clades for each of the geographic regions in your dataset e.g.
@@ -78,3 +78,5 @@ PAI 0.99 1 0 1 1
 ```
 The PAI clade is found in both the Atlantic and Pacific in the vast majority of the permutations, despite only 11 samples being re-sampled from each ocean in each permutation. The fact that we observe this clade for both of these oceans is probably not solely due to the fact that we have larger sample sizes from these oceans. Some of the other clades (e.g. P1 in the Pacific) could potentially have been missed in other oceans due to them having smaller sample sizes, because we only observed this clade in roughly 17% of simulations when we downsample to 11 individuals in the Pacific.
 
+# Version history
+v1.0.0 ready to go
