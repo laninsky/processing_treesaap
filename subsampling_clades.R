@@ -93,7 +93,8 @@ for (i in 1:(dim(samplesizes)[1]-1)) {
          temp_matrix <- rbind(rep(input[1,j],as.numeric(samplesizes[i,2])),temp_matrix)
        }
        record_matrix <- cbind(record_matrix,temp_matrix)  
-    } 
+    }
+    write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_full_hap_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)
   
   
   
