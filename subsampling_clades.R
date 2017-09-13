@@ -27,7 +27,7 @@ killswitch <- "yes"
 }
 
 if(x==1) {
-cat("Call the program by subsampling_clades <- function(working_dir,file,no_permuts), where:\nworking_dir == pathway to the folder with your clade file e.g. \"C:/blahblahblah\" \nfile == the name of your clade file (described in readme) e.g. \"data.txt\"\nno_permuts == the number of permutations you wish to perform e.g. 1000\n\nExample of input:\ngenetic_diversity_diffs(\"C:/Users/Folder/\",\"ATL_by_region_394.txt\",1000)\n\nSpecific errors/missing inputs:\n")
+cat("Call the program by subsampling_clades(working_dir,file,no_permuts), where:\nworking_dir == pathway to the folder with your clade file e.g. \"C:/blahblahblah\" \nfile == the name of your clade file (described in readme) e.g. \"data.txt\"\nno_permuts == the number of permutations you wish to perform e.g. 1000\n\nExample of input:\nsubsampling_clades(\"C:/Users/Folder/\",\"ATL_by_region_394.txt\",1000)\n\nSpecific errors/missing inputs:\n")
 }
 if(error_one==1) {
 cat("Sorry, I am missing a working directory pathway\nworking_dir == pathway to the folder with your clade file e.g. \"C:/blahblahblah\" \n\n")
@@ -36,7 +36,7 @@ if(error_two==2) {
 cat("Sorry, I am missing a filename for your clade file\nfile_name == the name of your clade file e.g. \"data.txt\"\n\n")
 }
 if(error_three==3) {
-cat("How many permutations would you like to complete?\no_permuts == the number of iterations you wish to perform e.g. 1000\n\n")
+cat("How many permutations would you like to complete?\nno_permuts == the number of iterations you wish to perform e.g. 1000\n\n")
 }
 
 # Error message tested and functioning
