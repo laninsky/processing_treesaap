@@ -102,7 +102,7 @@ for (i in 1:(dim(samplesizes)[1]-1)) {
        }   
      record_matrix <- cbind(record_matrix,temp_matrix)  
    }
-   write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_full_hap_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)
+   write.table(record_matrix,paste(samplesizes[i,1],"_",samplesizes[i,2],"_full_clade_record.txt",sep=""),quote=FALSE,row.names=FALSE,col.names=FALSE)
    summary_matrix <- input
    summary_matrix[2:dim(summary_matrix)[1],2:dim(summary_matrix)[2]] <- 0
    for (j in 2:(dim(summary_matrix)[2])) { 
