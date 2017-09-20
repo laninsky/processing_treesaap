@@ -24,7 +24,7 @@ subsampling_clades(working_dir,file,no_permuts)
 ```
 Where working_dir is the location with your input file/where output files will be written out, your file name (set up as described above), and the number of permutations you'd like to perform (resampling from the regions with large sample sizes).
 
-The program ticks through each region's sample size (from small to big), and subsamples any region which has a sample size larger than the current region. For the example above, the most extreme case is the Indian Ocean where only 1 individual was sampled. Using a sample size of one, the program resampled each other ocean. The raw output (labelled as Region_samplesize_full_hap_record.txt e.g. Indian_1_full_hap_record.txt has iterations in rows and the clades taken from oceans in columns with ocean headers in the top row e.g. (first four iterations)
+The program ticks through each region's sample size (from small to big), and subsamples any region which has a sample size larger than the current region. For the example above, the most extreme case is the Indian Ocean where only 1 individual was sampled. Using a sample size of one, the program resampled each other ocean. The raw output (labelled as Region_samplesize_full_clade_record.txt e.g. Indian_1_full_clade_record.txt has iterations in rows and the clades taken from oceans in columns with ocean headers in the top row e.g. (first four iterations)
 ```
 Atlantic GoM Mediterranean Pacific Indian
 A2 PAI M1 P3 PAI
@@ -50,7 +50,7 @@ PAI 0.305 0.088 0 0.457 1
 ```
 e.g. only 29.3% of the time when pulling just a single sample from the Atlantic, does this correspond to clade A1.
 
-If the sample size of a region is smaller or equal to the current sample size being used to subsample other regions, then the observed clades are output e.g. for the Gulf of Mexico sample size (11), GoM_11_full_hap_record.txt:
+If the sample size of a region is smaller or equal to the current sample size being used to subsample other regions, then the observed clades are output e.g. for the Gulf of Mexico sample size (11), GoM_11_full_clade_record.txt:
 ```
 Atlantic Atlantic Atlantic Atlantic Atlantic Atlantic Atlantic Atlantic Atlantic Atlantic Atlantic GoM GoM GoM Mediterranean Pacific Pacific Pacific Pacific Pacific Pacific Pacific Pacific Pacific Pacific Pacific Indian
 PAI PA1 PAI PA1 PA1 PAI A1 A2 A1 A1 A1 A1 A2 PAI M1 PAI P3 PAI P4 P5 PAI P3 PAI PAI P5 PAI PAI
