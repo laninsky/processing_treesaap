@@ -1,4 +1,6 @@
 # duplicating_sequences
+Originally at: https://github.com/laninsky/duplicating_sequences
+
 Some analyses, like skyline plots through BEAST, need each sequence represented (even duplicates). This code allows you to go from unique sequences to each sequence being represented.
 
 ### To use:
