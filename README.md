@@ -45,5 +45,8 @@ tempoutput <- read.table("output.txt",sep="\t",header=TRUE)
 outputtable <- as.data.table(tempoutput)
 out <- ddply(outputtable, .(codon,property), as.data.frame(nrow))
 out <- out[(which(out[,3]==nocomps)),]
+```
 
-
+### Version history
+This script was written for analyses associated with:  
+Morin, P.A., Foote, A.D., Baker, C.S., Hancock‐Hanser, B.L., Kaschner, K., Mate, B.R., Mesnick, S.L., Pease, V.L., Rosel, P.E. and Alexander, A., 2018. Demography or selection on linked cultural traits or genes? Investigating the driver of low mtDNA diversity in the sperm whale using complementary mitochondrial and nuclear genome analyses. Molecular ecology, 27(11), pp.2604-2619.
