@@ -79,4 +79,11 @@ PAI 0.99 1 0 1 1
 The PAI clade is found in both the Atlantic and Pacific in the vast majority of the permutations, despite only 11 samples being re-sampled from each ocean in each permutation. The fact that we observe this clade for both of these oceans is probably not solely due to the fact that we have larger sample sizes from these oceans. Some of the other clades (e.g. P1 in the Pacific) could potentially have been missed in other oceans due to them having smaller sample sizes, because we only observed this clade in roughly 17% of simulations when we downsample to 11 individuals in the Pacific.
 
 # Version history
-v1.0.0 ready to go
+v1.0.0 ready to go. This version first published with:  
+Morin, P.A., Foote, A.D., Baker, C.S., Hancock‐Hanser, B.L., Kaschner, K., Mate, B.R., Mesnick, S.L., Pease, V.L., Rosel, P.E. and Alexander, A., 2018. Demography or selection on linked cultural traits or genes? Investigating the driver of low mtDNA diversity in the sperm whale using complementary mitochondrial and nuclear genome analyses. Molecular ecology, 27(11), pp.2604-2619.
+
+If you use this script please cite the publication above and the following:  
+Alexander, A. 2018. subsampling_clades v.1.0.0. Available from: https://github.com/laninsky/subsampling_clades
+
+This script also wouldn't be possible without:  
+R: R Core Team. 2015. R: A language and environment for statistical computing. URL http://www.R-project.org/. R Foundation for Statistical Computing, Vienna, Austria. https://www.r-project.org/
