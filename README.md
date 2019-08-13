@@ -1,4 +1,6 @@
 # subsampling_clades v.1.0.0
+Originally at: https://github.com/laninsky/subsampling_clades
+
 Biogeographic inference can be heavily biased by sampling. This code downsamples by geographic region to try and account for this.
 
 As an input this code takes a file with the clades identifiers in the first column (whitespace delimited), followed by counts of samples found within those clades for each of the geographic regions in your dataset e.g.
